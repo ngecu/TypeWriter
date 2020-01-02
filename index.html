@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>#3.THE PADDLE</title>
+</head>
+<style>
+body{
+    background-image: url('https://images.pexels.com/photos/592753/pexels-photo-592753.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');
+background-size: cover;
+background-color: gray;
+background-blend-mode:color-burn;
+color: white;
+display: flex;
+text-align: center;}
+h1{
+    font-size: 2.5em;
+}
+canvas{
+background:#ffffff;
+display: block;
+margin: 0 auto;
+}
+a{color: white;text-decoration: none;}
+</style>
+<body >
+    <div class="side1" style="position: relative;left:0;width: 50%;max-width: 50%;;height: 90%;top: 0;">
+    <h1 style="color: yellow;">
+        Paddle
+    </h1>
+
+    <br>
+    <canvas id="myCanvas" width="480" height="320"></canvas>
+
+
+</div>
+ 
+    <div class="side" style="position: relative;width: 50%;height: 90%;top: 0;">
+        <h1 style="color: white;">
+            <a href="" class="typewrite" data-period="2000" data-type='[ "We begin with drawing it with beginPath method and conclude with closePath method of the canvas","The Paddle is rectangle in shape so we apply the rect() canvas method which requires 4 parameters:","1.X position of the element 2.Y position of the element 3.width of the element 4.height of the element", "We then colour our rectangle paddle with the fillStyle property and implement it with fill method","Lets now focus on manipulation and control of the paddle using the keyboard keys right and left","The events involved are keyboards keydown & keyup where upon pressing and realease respectively(specifically to the keys : right,left,right arrow and left arrow.","Then what are is the condition to be met when the functions are called?","The paddle should remain in the range of the canvas width","Lets implement the code"]'>
+              <span class="wrap"></span>
+            </a>
+          </h1>
+  <h1>
+      <p class="dev"></p>
+    
+      
+    
+   
+     
+    </h1>
+</div>
+</body>
+<script>
+
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d"); //store the 2D rendering context(to paint on the canvas)
+
+var TxtType = function(el, toRotate, period) {
+        this.toRotate = toRotate;
+        this.el = el;
+        this.loopNum = 0;
+        this.period = parseInt(period, 10) || 2000;
+        this.txt = '';
+        this.tick();
+        this.isDeleting = false;
+    };
+
+    TxtType.prototype.tick = function() {
+        var i = this.loopNum % this.toRotate.length;
+        var fullTxt = this.toRotate[i];
+
+        if (this.isDeleting) {
+        this.txt = fullTxt.substring(0, this.txt.length - 1);
+        } else {
+        this.txt = fullTxt.substring(0, this.txt.length + 1);
+        }
+
+        this.el.innerHTML = '<span class="wrap">'+this.txt+'</span>';
+
+        var that = this;
+        var delta = 200 - Math.random() * 100;
+
+        if (this.isDeleting) { delta /= 2; }
+
+        if (!this.isDeleting && this.txt === fullTxt) {
+        delta = this.period;
+        this.isDeleting = true;
+        } else if (this.isDeleting && this.txt === '') {
+        this.isDeleting = false;
+        this.loopNum++;
+        delta = 700;
+        }
+
+        setTimeout(function() {
+        that.tick();
+        }, delta);
+    };
+
+    window.onload = function() {
+        var elements = document.getElementsByClassName('typewrite');
+        for (var i=0; i<elements.length; i++) {
+            var toRotate = elements[i].getAttribute('data-type');
+            var period = elements[i].getAttribute('data-period');
+            if (toRotate) {
+              new TxtType(elements[i], JSON.parse(toRotate), period);
+            }
+        }
+        // INJECT CSS
+        var css = document.createElement("style");
+        css.type = "text/css";
+        css.innerHTML = ".typewrite > .wrap { border-right: 0.08em solid #fff}";
+        document.body.appendChild(css);
+    };
+
+    var paddleHeight = 10;
+var paddleWidth = 75;
+var paddleX = (canvas.width-paddleWidth) / 2;
+var paddleY = (canvas.height-paddleHeight) / 2;
+ //starting postion on the x-axis
+
+var rightPressed = false;
+var leftPressed = false;
+
+function drawPaddle() {
+ctx.beginPath();
+ctx.rect(paddleX, paddleY, paddleWidth, paddleHeight);
+ctx.fillStyle = "red";
+ctx.fill();
+ctx.closePath();
+}
+
+
+
+function draw() {
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+drawDev();
+drawPaddle();
+
+
+if(rightPressed) {
+paddleX += 7;
+if (paddleX + paddleWidth > canvas.width){
+paddleX = canvas.width - paddleWidth;
+}
+}
+else if(leftPressed) {
+paddleX -= 7;
+if (paddleX < 0){
+paddleX = 0;
+}
+}
+}
+
+function drawDev(){
+ctx.font = "16px Arial";
+ctx.fillStyle = "red";
+ctx.fillText(10, canvas.width-270, 20);
+
+}
+
+document.addEventListener("keydown", keyDownHandler );
+document.addEventListener("keyup", keyUpHandler);
+   
+function keyDownHandler(e) {
+if(e.key == "Right" || e.key == "ArrowRight") {
+rightPressed = true;
+}
+else if(e.key == "Left" || e.key == "ArrowLeft") {
+leftPressed = true;
+}
+}
+
+function keyUpHandler(e) {
+if(e.key == "Right" || e.key == "ArrowRight") {
+rightPressed = false;
+}
+else if(e.key == "Left" || e.key == "ArrowLeft") {
+leftPressed = false;
+}
+}
+
+var intervall = setInterval(draw,10)
+</script>
+</html>
